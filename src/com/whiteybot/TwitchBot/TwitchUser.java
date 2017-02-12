@@ -1,14 +1,5 @@
 package com.whiteybot.TwitchBot;
 
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.Date;
 
 /**
@@ -83,44 +74,6 @@ public class TwitchUser {
 
     public boolean isOperator() {
         return mPrefix.contains("@");
-    }
-
-    private void populateUserFromTwitch(String userName) {
-        String url = "https://api.twitch.tv/kraken";
-        String charset = StandardCharsets.UTF_8.name();
-
-        try {
-            URLConnection connection = new URL(url).openConnection();
-            connection.setRequestProperty("Accept-Charset", charset);
-            connection.setRequestProperty("Accept", "application/vnd.twitchtv.v5+json");
-            connection.setRequestProperty("Authorization", "OAuth gdq83yl8688gjzlt3im6nmg42v0ann");
-            InputStream response = connection.getInputStream();
-
-            JSONObject obj = new JSONObject(response).getJSONObject("users");
-            mTwitchID = obj.getString("_id");
-            mBio = obj.getString("bio");
-            try {
-                mCreated = DateFormat.getDateInstance().parse(obj.getString("created_at"));
-            } catch (ParseException e) {
-
-            }
-            mDisplayName = obj.getString("display_name");
-            mLogo = obj.getString("logo");
-            mTwitchName = obj.getString("name");
-            mType = obj.getString("type");
-            try {
-                mUpdated = DateFormat.getDateInstance().parse(obj.getString("updated_at"));
-            } catch (ParseException e) {
-
-            }
-
-        } catch (IOException e) {
-
-        }
-    }
-
-    public void save() {
-
     }
 
     public void setAllowURL(boolean allowURL) {
