@@ -11,8 +11,6 @@ import static java.lang.System.exit;
  */
 public class WhiteyBot {
     public static void main(String[] args) {
-        TwitchAPI api = new TwitchAPI();
-        api.connect();
         TwitchBot bot = new TwitchBot();
         bot.initTwitch();
 
