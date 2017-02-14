@@ -7,7 +7,6 @@ import java.util.List;
 /**
  * Created by Travis on 2/12/2017.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class SearchResult<T> {
 
     @JsonProperty("_total")
