@@ -68,7 +68,7 @@ public class GameBox {
         return template;
     }
 
-    public void setTemplate() {
+    public void setTemplate(String template) {
         this.template = template;
     }
 }
