@@ -32,8 +32,7 @@ public class Authenticator {
         if (this.listenPort == -1)
             this.listenPort = 80;
 
-        return String.format("%s/oauth2/authorize?response_type=token&client_id=%s%redirect_uri=%s&scope=%s",
-                twitchBaseURL, clientID, redirectURI, Scopes.join(scopes));
+        return String.format("%s/oauth2/authorize?response_type=token&client_id=%s&redirect_uri=%s&scope=%s", twitchBaseURL, clientID, redirectURI, Scopes.join(scopes));
     }
 
     public boolean awaitAccessToken() {

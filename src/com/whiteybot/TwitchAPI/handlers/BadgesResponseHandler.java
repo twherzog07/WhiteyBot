@@ -1,5 +1,7 @@
 package com.whiteybot.TwitchAPI.handlers;
 
+import com.whiteybot.TwitchAPI.models.ChannelBadges;
+
 /**
  * Created by Travis on 2/11/2017.
  */
