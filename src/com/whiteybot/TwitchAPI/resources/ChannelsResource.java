@@ -30,32 +30,22 @@ public class ChannelsResource extends AbstractResource {
 
     /**
      * Returns a channel object of authenticated user. Channel object includes stream key.
-     * <p>Authenticated, requred scope: {@link Scopes#CHANNEL_READ}</p>
+     * <p>Authenticated, required scope: {@link Scopes#CHANNEL_READ}</p>
      *
-     * @param handler   the response handler
+     * @param handler the response handler
      */
-    public void get(final StringHttpResponseHandler handler) {
+    public void get(final ChannelResponseHandler handler) {
         String url = String.format("%s/channel", getBaseUrl());
 
-        http.get(url, new StringHttpResponseHandler() {
+        http.get(url, new TwitchHttpResponseHandler(handler) {
             @Override
-            public void onSuccess(int i, Map<String, List<String>> map, String s) {
+            public void onSuccess(int statusCode, Map<String, List<String>> headers, String content) {
                 try {
-                    Channel value = objectMapper.readValue(s, Channel.class);
-                    handler.onSuccess(i, map, s);
+                    Channel value = objectMapper.readValue(content, Channel.class);
+                    handler.onSuccess(value);
                 } catch (IOException e) {
                     handler.onFailure(e);
                 }
-            }
-
-            @Override
-            public void onFailure(int i, Map<String, List<String>> map, String s) {
-                System.out.println("FAILURE");
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                System.out.println("FAILURE");
             }
         });
     }
