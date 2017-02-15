@@ -6,7 +6,6 @@ import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -49,10 +48,10 @@ public class AuthenticationCallbackRequest implements Runnable {
             String[] pair = param.split("=");
 
             try {
-                String key = URLDecoder.decode(pair[0], StandardCharsets.UTF_8.name());
+                String key = URLDecoder.decode(pair[0], "UTF-8");
                 String value = "";
                 if (pair.length > 1) {
-                    value = URLDecoder.decode(pair[1], StandardCharsets.UTF_8.name());
+                    value = URLDecoder.decode(pair[1], "UTF-8");
                 }
                 params.put(key, value);
             } catch (UnsupportedEncodingException e) {}
