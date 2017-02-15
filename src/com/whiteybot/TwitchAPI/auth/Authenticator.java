@@ -46,7 +46,7 @@ public class Authenticator {
         try {
             server.start();
         } catch (IOException e) {
-            authenticationError = server.getAuthenticationError();
+            authenticationError = new AuthenticationError("JavaException", e.toString());
             return false;
         }
 
