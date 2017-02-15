@@ -4,9 +4,14 @@ import static com.whiteybot.tools.Globals.*;
 import static com.whiteybot.tools.LogTools.*;
 import static java.lang.System.exit;
 
+import com.whiteybot.TwitchAPI.TwitchAPI;
+import com.whiteybot.TwitchAPI.handlers.ChannelResponseHandler;
+import com.whiteybot.TwitchAPI.handlers.UserResponseHandler;
+import com.whiteybot.TwitchAPI.models.*;
 import com.whiteybot.tools.FileTools;
 
 import org.jibble.pircbot.*;
+import org.jibble.pircbot.User;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,6 +28,7 @@ public class TwitchBot extends PircBot {
     private boolean mHasCommands, mHasMembership, mHasTags;
     private ArrayList<TwitchChannel> mChannels;
     private ArrayList<TwitchUser> mModerators;
+    private TwitchAPI mTwitchAPI;
 
     public TwitchBot() {
         mLoopTime = 0.0f;
@@ -32,7 +38,9 @@ public class TwitchBot extends PircBot {
         mHasTags = false;
         mChannels = new ArrayList<>();
         mModerators = new ArrayList<>();
+        mTwitchAPI = new TwitchAPI();
 
+        mTwitchAPI.setClientID(gTwitchClientID);
         setName(gBotName);
         setVersion(gBotVersion);
         setVerbose(false);
@@ -70,7 +78,31 @@ public class TwitchBot extends PircBot {
     public void joinToChannel(String channel) {
         logMessage("Attempting to join channel " + channel);
         joinChannel(channel);
-        mChannels.add(new TwitchChannel(channel));
+        TwitchChannel twitchChannel = new TwitchChannel(channel);
+
+        if (channel.startsWith("#"))
+            channel = channel.replace("#", "");
+        final String channelStr = channel;
+
+        mTwitchAPI.channels().get(channel, new ChannelResponseHandler() {
+            @Override
+            public void onSuccess(Channel channel) {
+                twitchChannel.setTwitchChannel(channel);
+                logMessage("Successfully loaded Twitch profile for channel: " + channel.toString());
+            }
+
+            @Override
+            public void onFailure(int statusCode, String statusMessage, String errorMessage) {
+                logError(String.format("Failed to load information for channel ({0}) - Error Message: {1}", channelStr, errorMessage));
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                logError(String.format("Failed to load information for channel ({0}) - Error Message: {1}", channelStr, throwable.getMessage()));
+            }
+        });
+
+        mChannels.add(twitchChannel);
     }
 
     public void partFromChannel(String channel) {
@@ -103,6 +135,37 @@ public class TwitchBot extends PircBot {
         sendTwitchMessage(channel, sender + " requested deletion of channel: " + channel);
         partFromChannel(channel);
         FileTools.removeTextFromFile("data", "channels.txt", channel);
+    }
+
+    public void addUser(String channel, String userName) {
+        TwitchChannel tc = getTwitchChannel(channel);
+        TwitchUser mod = getOfflineModerator(userName);
+        String prefix = "";
+
+        if (mod != null)
+            prefix = mod.getPrefix();
+        TwitchUser twitchUser = new TwitchUser(userName, prefix);
+
+        mTwitchAPI.users().get(twitchUser.getName(), new UserResponseHandler() {
+            @Override
+            public void onSuccess(com.whiteybot.TwitchAPI.models.User user) {
+                twitchUser.setTwitchProfile(user);
+                logMessage("Successfully loaded Twitch user profile for user: " + user.toString());
+            }
+
+            @Override
+            public void onFailure(int statusCode, String statusMessage, String errorMessage) {
+                logError(String.format("Failed to add user ({0}) to channel ({1}) - Error Message: {2}", userName, channel, errorMessage));
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                logError(String.format("Failed to add user ({0}) to channel ({1}) - Error Message: {2}", userName, channel, throwable.getMessage()));
+            }
+        });
+
+        tc.addUser(twitchUser);
+        logMessage("Adding new user (" + twitchUser + ") to channel (" + tc.toString() + ")");
     }
 
     public void sendTwitchMessage(String channel, String message) {
@@ -294,13 +357,7 @@ public class TwitchBot extends PircBot {
 
         for (User u : users) {
             if (tc.getUser(u.getNick()) == null) {
-                TwitchUser mod = getOfflineModerator(u.getNick());
-                String prefix = "";
-                if (mod != null)
-                    prefix = mod.getPrefix();
-                TwitchUser user = new TwitchUser(u.getNick(), prefix);
-                tc.addUser(user);
-                logMessage("Adding new user (" + user + ") to channel (" + tc.toString() + ")");
+                addUser(channel, u.getNick());
             }
         }
     }
@@ -314,12 +371,7 @@ public class TwitchBot extends PircBot {
         TwitchUser mod = getOfflineModerator(sender);
 
         if (tc != null && user == null) {
-            String prefix = "";
-            if (mod != null)
-                prefix = mod.getPrefix();
-            user = new TwitchUser(sender, prefix);
-            tc.addUser(user);
-            logMessage("Adding new user (" + user + ") to channel (" + tc.toString() + ")");
+            addUser(channel, sender);
         }
     }
 
