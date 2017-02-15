@@ -78,10 +78,6 @@ public class AuthenticationCallbackRequest implements Runnable {
         BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
         String requestLine = br.readLine();
-//        String headerLine = null;
-//        while ((headerLine = br.readLine()).length() != 0) {
-//
-//        }
         StringTokenizer tokens = new StringTokenizer(requestLine);
         String requestMethod = tokens.nextToken();
         String requestFilename = tokens.nextToken();
