@@ -43,7 +43,7 @@ public class VideosResource extends AbstractResource {
             public void onSuccess(int statusCode, Map<String, List<String>> headers, String content) {
                 try {
                     Videos value = objectMapper.readValue(content, Videos.class);
-                    handler.onSuccess(value.getTotal(), value.getVideos());
+                    handler.onSuccess(value.getVideos().size(), value.getVideos());
                 } catch (IOException e) {
                     handler.onFailure(e);
                 }
@@ -63,7 +63,7 @@ public class VideosResource extends AbstractResource {
             public void onSuccess(int statusCode, Map<String, List<String>> headers, String content) {
                 try {
                     Videos value = objectMapper.readValue(content, Videos.class);
-                    handler.onSuccess(value.getTotal(), value.getVideos());
+                    handler.onSuccess(value.getVideos().size(), value.getVideos());
                 } catch (IOException e) {
                     handler.onFailure(e);
                 }

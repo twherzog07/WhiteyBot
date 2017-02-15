@@ -71,7 +71,7 @@ public class SearchResource extends AbstractResource {
             public void onSuccess(int statusCode, Map<String, List<String>> headers, String content) {
                 try {
                     SearchResults value = objectMapper.readValue(content, SearchResults.class);
-                    handler.onSuccess(value.getTotal(), value.getGames());
+                    handler.onSuccess(value.getGames().size(), value.getGames());
                 } catch (IOException e) {
                     handler.onFailure(e);
                 }
