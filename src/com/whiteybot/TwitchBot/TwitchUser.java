@@ -1,6 +1,6 @@
 package com.whiteybot.TwitchBot;
 
-import java.util.Date;
+import com.whiteybot.TwitchAPI.models.User;
 
 /**
  * Created by Travis on 2/10/2017.
@@ -13,23 +13,13 @@ public class TwitchUser {
     private boolean mAllowURL;
     private long mPoints;
 
-    private String mTwitchID;
-    private String mBio;
-    private Date mCreated;
-    private String mDisplayName;
-    private String mLogo;
-    private String mTwitchName;
-    private String mType;
-    private Date mUpdated;
+    private User twitchProfile;
 
     public TwitchUser(String name, String prefix) {
         mName = name;
         mPrefix = prefix;
         mCmdTimer = 0;
         mAllowURL = false;
-
-//        if (mName != null)
-//            populateUserFromTwitch(mName);
     }
 
     public void addPrefixChar(String prefix) {
@@ -44,10 +34,6 @@ public class TwitchUser {
         return mAllowURL;
     }
 
-    public String getBio() {
-        return mBio;
-    }
-
     public int getCmdTimer() {
         return mCmdTimer;
     }
@@ -60,8 +46,8 @@ public class TwitchUser {
         return mPrefix;
     }
 
-    public String getTwitchID() {
-        return mTwitchID;
+    public User getTwitchProfile() {
+        return twitchProfile;
     }
 
     public boolean isAdmin() {
@@ -86,6 +72,10 @@ public class TwitchUser {
 
     public void setPrefix(String prefix) {
         mPrefix = prefix;
+    }
+
+    public void setTwitchProfile(User twitchProfile) {
+        this.twitchProfile = twitchProfile;
     }
 
     @Override
