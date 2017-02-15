@@ -15,13 +15,11 @@ public class ChannelBadges {
     private Badge staff;
     private Badge turbo;
     private Badge subscriber;
-    private Badge prime;
 
     @Override
     public String toString() {
         return "ChannelBadges{globalMod=" + globalMod + ", admin=" + admin + ", broadcaster=" + broadcaster +
-                ", mod=" + mod + ", staff=" + staff + ", turbo=" + turbo + ", subscriber=" + subscriber +
-                ", prime=" + prime + '}';
+                ", mod=" + mod + ", staff=" + staff + ", turbo=" + turbo + ", subscriber=" + subscriber + '}';
     }
 
     @Override
@@ -37,8 +35,7 @@ public class ChannelBadges {
         if (mod != null ? !mod.equals(channelBadges.mod) : channelBadges.mod != null) return false;
         if (staff != null ? !staff.equals(channelBadges.staff) : channelBadges.staff != null) return false;
         if (turbo != null ? !turbo.equals(channelBadges.turbo) : channelBadges.turbo != null) return false;
-        if (subscriber != null ? !subscriber.equals(channelBadges.subscriber) : channelBadges.subscriber != null) return false;
-        return !(prime != null ? !prime.equals(channelBadges.prime) : channelBadges.prime != null);
+        return !(subscriber != null ? !subscriber.equals(channelBadges.subscriber) : channelBadges.subscriber != null);
     }
 
     @Override
@@ -50,7 +47,6 @@ public class ChannelBadges {
         result = 31 * result + (staff != null ? staff.hashCode() : 0);
         result = 31 * result + (turbo != null ? turbo.hashCode() : 0);
         result = 31 * result + (subscriber != null ? subscriber.hashCode() : 0);
-        result = 31 * result + (prime != null ? prime.hashCode() : 0);
         return result;
     }
 
@@ -108,13 +104,5 @@ public class ChannelBadges {
 
     public void setSubscriber(Badge subscriber) {
         this.subscriber = subscriber;
-    }
-
-    public Badge getPrime() {
-        return prime;
-    }
-
-    public void setPrime(Badge prime) {
-        this.prime = prime;
     }
 }
