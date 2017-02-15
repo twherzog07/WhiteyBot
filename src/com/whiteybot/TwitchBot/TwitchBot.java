@@ -121,6 +121,139 @@ public class TwitchBot extends PircBot {
         }
     }
 
+    public void processCommand(TwitchChannel channel, TwitchUser sender, String message) {
+        String[] msg_array = message.split(" ");
+        String msg_command = msg_array[0];
+        String channelTarget;
+        float time;
+        long timeStart, timeEnd;
+
+        timeStart = System.nanoTime();
+
+            /*
+             * Commands available on bot's channel
+             */
+        if (channel.equals(gBotChannel)) {
+            switch (msg_command) {
+                case "help":
+                    sendTwitchMessage(channel.getName(), "List of available commands on this channel: " + gCommandsBot);
+                    break;
+                case "register":
+                    addChannel("#" + sender.getName(), sender.getName());
+                    break;
+                case "unregister":
+                    delChannel("#" + sender.getName(), sender.getName());
+                    break;
+            }
+        }
+
+            /*
+             * Commands available on all channels
+             */
+        switch (msg_command) {
+                /*
+                 * Normal channel user commands below
+                 */
+            case "help":
+                String helpText = "List of available commands to you: " + gCommandsUser;
+
+                if (sender.isOperator())
+                    helpText += " " + gCommandsOp;
+
+                if (sender.isModerator())
+                    helpText += " " + gCommandsMod;
+
+                if (sender.isAdmin())
+                    helpText += " " + gCommandsAdmin;
+
+                sendTwitchMessage(channel.getName(), helpText);
+                break;
+
+            case "info":
+                sendTwitchMessage(channel.getName(), "Language: Java v" + getVersion() + " - Bot Version: " + gBotVersion);
+                break;
+
+            case "performance":
+                sendTwitchMessage(channel.getName(), "My current main loop cycle time is " + mLoopTime + "ms. My current command loop cycle time is " + mCommandTime + "ms.");
+                break;
+
+            case "date":
+                sendTwitchMessage(channel.getName(), gDateFormat.format(new Date()));
+                break;
+
+            case "time":
+                sendTwitchMessage(channel.getName(), gTimeFormat.format(new Date()));
+                break;
+
+            case "users":
+                if (msg_array.length <= 1) {
+                    sendTwitchMessage(channel.getName(), "Users in this channel: " + channel.getUsers().size());
+                    break;
+                }
+
+                if (msg_array[1].equals("all")) {
+                    sendTwitchMessage(channel.getName(), "Users in all channels: " + getAllUsers().size());
+                    break;
+                }
+
+                channelTarget = msg_array[1];
+                if (!channelTarget.startsWith("#"))
+                    channelTarget = "#" + channelTarget;
+
+                TwitchChannel usersChannel = getTwitchChannel(channelTarget);
+                if (usersChannel == null) {
+                    logError("Error on !users channel, channel (" + channelTarget + ") doesn't exist!");
+                    break;
+                }
+
+                sendTwitchMessage(channel.getName(), "Users in channel (" + usersChannel + "): " + usersChannel.getUsers().size());
+                break;
+
+            case "ops":
+                if (msg_array.length <= 1) {
+                    sendTwitchMessage(channel.getName(), "Operators in this channel: " + channel.getOperators().size());
+                    break;
+                }
+
+                if (msg_array[1].equals("all")) {
+                    sendTwitchMessage(channel.getName(), "Operators in all channels: " + getAllOperators().size());
+                    break;
+                }
+
+                channelTarget = msg_array[1];
+                if (!channelTarget.startsWith("#"))
+                    channelTarget = "#" + channelTarget;
+
+                TwitchChannel opsChannel = getTwitchChannel(channelTarget);
+                if (opsChannel == null) {
+                    logError("Error on !ops channel, channel (" + channelTarget + ") doesn't exist!");
+                    break;
+                }
+
+                sendTwitchMessage(channel.getName(), "Operators in channel (" + opsChannel + "): " + opsChannel.getOperators().size());
+                break;
+
+            case "mods":
+                break;
+
+            case "channel":
+                break;
+
+            case "channels":
+                break;
+
+            case "slots":
+
+            case "permit":
+
+            case "joinchan":
+        }
+
+        timeEnd = System.nanoTime();
+        time = (float)(timeEnd - timeStart) / 1000000.0f;
+        setCommandTime(getCommandTime() * 0.1f + time * 0.9f);
+    }
+
     @Override
     public void handleLine(String line) {
         logMessage("handleLine | " + line);
@@ -234,136 +367,7 @@ public class TwitchBot extends PircBot {
             }
 
             message = message.replace("!", "");
-            String[] msg_array = message.split(" ");
-            String msg_command = msg_array[0];
-            String channelTarget;
-            float time;
-            long timeStart, timeEnd;
-
-            timeStart = System.nanoTime();
-
-            /*
-             * Commands available on bot's channel
-             */
-            if (channel.equals(gBotChannel)) {
-                switch (msg_command) {
-                    case "help":
-                        sendTwitchMessage(channel, "List of available commands on this channel: " + gCommandsBot);
-                        break;
-                    case "register":
-                        addChannel("#" + sender, sender);
-                        break;
-                    case "unregister":
-                        delChannel("#" + sender, sender);
-                        break;
-                }
-            }
-
-            /*
-             * Commands available on all channels
-             */
-            switch (msg_command) {
-                /*
-                 * Normal channel user commands below
-                 */
-                case "help":
-                    String helpText = "List of available commands to you: " + gCommandsUser;
-
-                    if (user.isOperator())
-                        helpText += " " + gCommandsOp;
-
-                    if (user.isModerator())
-                        helpText += " " + gCommandsMod;
-
-                    if (user.isAdmin())
-                        helpText += " " + gCommandsAdmin;
-
-                    sendTwitchMessage(channel, helpText);
-                    break;
-
-                case "info":
-                    sendTwitchMessage(channel, "Language: Java v" + getVersion() + " - Bot Version: " + gBotVersion);
-                    break;
-
-                case "performance":
-                    sendTwitchMessage(channel, "My current main loop cycle time is " + mLoopTime + "ms. My current command loop cycle time is " + mCommandTime + "ms.");
-                    break;
-
-                case "date":
-                    sendTwitchMessage(channel, gDateFormat.format(new Date()));
-                    break;
-
-                case "time":
-                    sendTwitchMessage(channel, gTimeFormat.format(new Date()));
-                    break;
-
-                case "users":
-                    if (msg_array.length <= 1) {
-                        sendTwitchMessage(channel, "Users in this channel: " + tc.getUsers().size());
-                        break;
-                    }
-
-                    if (msg_array[1].equals("all")) {
-                        sendTwitchMessage(channel, "Users in all channels: " + getAllUsers().size());
-                        break;
-                    }
-
-                    channelTarget = msg_array[1];
-                    if (!channelTarget.startsWith("#"))
-                        channelTarget = "#" + channelTarget;
-
-                    TwitchChannel usersChannel = getTwitchChannel(channelTarget);
-                    if (usersChannel == null) {
-                        logError("Error on !users channel, channel (" + channelTarget + ") doesn't exist!");
-                        break;
-                    }
-
-                    sendTwitchMessage(channel, "Users in channel (" + usersChannel + "): " + usersChannel.getUsers().size());
-                    break;
-
-                case "ops":
-                    if (msg_array.length <= 1) {
-                        sendTwitchMessage(channel, "Operators in this channel: " + tc.getOperators().size());
-                        break;
-                    }
-
-                    if (msg_array[1].equals("all")) {
-                        sendTwitchMessage(channel, "Operators in all channels: " + getAllOperators().size());
-                        break;
-                    }
-
-                    channelTarget = msg_array[1];
-                    if (!channelTarget.startsWith("#"))
-                        channelTarget = "#" + channelTarget;
-
-                    TwitchChannel opsChannel = getTwitchChannel(channelTarget);
-                    if (opsChannel == null) {
-                        logError("Error on !ops channel, channel (" + channelTarget + ") doesn't exist!");
-                        break;
-                    }
-
-                    sendTwitchMessage(channel, "Operators in channel (" + opsChannel + "): " + opsChannel.getOperators().size());
-                    break;
-
-                case "mods":
-                    break;
-
-                case "channel":
-                    break;
-
-                case "channels":
-                    break;
-
-                case "slots":
-
-                case "permit":
-
-                case "joinchan":
-            }
-
-            timeEnd = System.nanoTime();
-            time = (float)(timeEnd - timeStart) / 1000000.0f;
-            setCommandTime(getCommandTime() * 0.1f + time * 0.9f);
+            processCommand(tc, user, message);
         }
     }
 
