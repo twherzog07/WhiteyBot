@@ -40,7 +40,7 @@ public class TeamsResource extends AbstractResource {
     }
 
     public void get(final String team, final TeamResponseHandler handler) {
-        String url = String.format("%s/teams/%s", getBaseUrl());
+        String url = String.format("%s/teams/%s", getBaseUrl(), team);
 
         http.get(url, new TwitchHttpResponseHandler(handler) {
             @Override
