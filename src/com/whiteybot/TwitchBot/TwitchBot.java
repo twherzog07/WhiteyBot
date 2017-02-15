@@ -337,6 +337,28 @@ public class TwitchBot extends PircBot {
     }
 
     @Override
+    public void onMode(String channel, String sourceNick, String sourceLogin, String sourceHostname, String mode) {
+        super.onMode(channel, sourceNick, sourceLogin, sourceHostname, mode);
+
+        TwitchChannel tc = getTwitchChannel(channel);
+        TwitchUser user = tc.getUser(sourceNick);
+
+        if (user == null) {
+            logError("Error on MODE, cannot find (" + user + ") from channel (" + tc.toString() + ")");
+            return;
+        }
+
+        if (mode.equals("+o")) {
+            logMessage("Adding +o MODE for user (" + user + ") in channel (" + tc.toString() + ")");
+            user.addPrefixChar("@");
+        }
+        else if (mode.equals("-o")) {
+            logMessage("Adding -o MODE for user (" + user + ") in channel (" + tc.toString() + ")");
+            user.delPrefixChar("@");
+        }
+    }
+
+    @Override
     public void onMessage(String channel, String sender, String login, String hostname, String message) {
         logMessage("logs/channels/" + channel.replace("#", ""), "onMessage", "User: " + sender + " Hostname: " + hostname + " Message: " + message);
 
@@ -372,25 +394,8 @@ public class TwitchBot extends PircBot {
     }
 
     @Override
-    public void onMode(String channel, String sourceNick, String sourceLogin, String sourceHostname, String mode) {
-        super.onMode(channel, sourceNick, sourceLogin, sourceHostname, mode);
+    public void onPrivateMessage(String sender, String login, String hostname, String message) {
 
-        TwitchChannel tc = getTwitchChannel(channel);
-        TwitchUser user = tc.getUser(sourceNick);
-
-        if (user == null) {
-            logError("Error on MODE, cannot find (" + user + ") from channel (" + tc.toString() + ")");
-            return;
-        }
-
-        if (mode.equals("+o")) {
-            logMessage("Adding +o MODE for user (" + user + ") in channel (" + tc.toString() + ")");
-            user.addPrefixChar("@");
-        }
-        else if (mode.equals("-o")) {
-            logMessage("Adding -o MODE for user (" + user + ") in channel (" + tc.toString() + ")");
-            user.delPrefixChar("@");
-        }
     }
 
     public ArrayList<TwitchUser> getAllUsers() {
