@@ -28,6 +28,8 @@ public class Globals {
     public static String gServerTagsRequest = "CAP REQ :twitch.tv/tags";
     public static String gServerTagsResponse = ":tmi.twitch.tv CAP * ACK :twitch.tv/tags";
 
+    public static String gTwitchClientID = "3a1zujik61zqzrtkpr7js8sghdj5xd";
+
     public static DateFormat gDateFormat = new SimpleDateFormat("MM.dd.yyyy");
     public static DateFormat gTimeFormat = new SimpleDateFormat("HH:mm:ss");
 
