@@ -52,7 +52,7 @@ public class VideosResource extends AbstractResource {
     }
 
     public void getTop(final VideosResponseHandler handler) {
-        getTop(new RequestParams(), handler);
+        getTop(null, handler);
     }
 
     public void getFollowed(final RequestParams params, final VideosResponseHandler handler) {
