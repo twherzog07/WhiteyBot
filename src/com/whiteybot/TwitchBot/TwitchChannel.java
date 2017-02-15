@@ -1,5 +1,7 @@
 package com.whiteybot.TwitchBot;
 
+import com.whiteybot.TwitchAPI.models.Channel;
+
 import java.util.ArrayList;
 
 /**
@@ -10,6 +12,8 @@ public class TwitchChannel {
     private String mName;
     private ArrayList<TwitchUser> mUsers;
     private int mCmdSent;
+
+    private Channel twitchChannel;
 
     public TwitchChannel(String name) {
         mName = name;
@@ -83,6 +87,10 @@ public class TwitchChannel {
         return result;
     }
 
+    public Channel getTwitchChannel() {
+        return twitchChannel;
+    }
+
     public TwitchUser getUser(String name) {
         TwitchUser result = null;
 
@@ -102,6 +110,10 @@ public class TwitchChannel {
 
     public void setCmdSent(int cmdSent) {
         mCmdSent = cmdSent;
+    }
+
+    public void setTwitchChannel(Channel twitchChannel) {
+        this.twitchChannel = twitchChannel;
     }
 
     @Override
