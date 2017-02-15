@@ -8,7 +8,7 @@ import java.net.*;
 /**
  * Created by Travis on 2/11/2017.
  */
-public class AuthenticationCallbackServer implements  AuthenticationListener {
+public class AuthenticationCallbackServer implements AuthenticationListener {
 
     public static final String DEFAULT_AUTH_PAGE = "/authorize.html";
     public static final String DEFAULT_FAILURE_PAGE = "/authorize-failure.html";
